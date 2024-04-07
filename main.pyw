@@ -13,7 +13,10 @@ from shutil import copyfile
 import zipfile
 import io
 import winreg
-
+import datetime
+import requests
+import configparser
+import subprocess
 
 # Преобразуем ui шаблон в python код на лету
 f = open(os.path.join(os.path.dirname(__file__), r'form.py'), "w", encoding="utf-8")
@@ -47,11 +50,49 @@ def check_file(str):
     except Exception as e:
         write_error_log(e)
 
-# def replace_git(str):
-    # for DST.po in files:
-    # filelist.append(DST.po)
-    # fullpath = self.DSTpo_path
-    # shutil.move(os.path.join(src, DST.po), os.path.join(dst, DST.po))
+
+class same_msgid(QThread):
+    progress = pyqtSignal(int)
+    msg = pyqtSignal(str)
+    finished = pyqtSignal()
+    
+    def __init__(self,archive_po,bank_po):
+        QThread.__init__(self)
+        self.archive_po=archive_po
+        self.bank_po=bank_po
+        
+    def __del__(self):
+        self.wait()
+
+    def run(self):
+        filename1 = self.bank_po
+        f1 = io.open(filename1, encoding='utf-8', mode='r')
+        text1 = f1.readlines()
+        f1.close()
+        
+        filename2 = self.archive_po
+        f2 = io.open(filename2, encoding='utf-8', mode='r')
+        text2 = f2.readlines()
+        f2.close()
+        
+        counting = 0
+        for ind1,line1 in  enumerate(text1):
+            self.progress.emit(int(ind1 * 100/ len(text1)))
+            if line1[:5] == 'msgid':
+                for ind2, line2 in enumerate(text2):
+                    if line1==line2:
+                        text1[ind1+1]=text2[ind2+1]
+                        counting+=1
+                        break
+
+        self.msg.emit(f"Найдено и подставлено строк в {filename1.split('/')[-1]}: " + str(counting))
+        self.progress.emit(100)
+
+        f=io.open(filename1, encoding='utf-8',mode='w')
+        for lines in text1:
+            f.write(lines)
+        f.close()
+        # self.finished.emit()
 
 class merge_files(QThread):
     progress = pyqtSignal(int)
@@ -151,11 +192,16 @@ class ExampleApp(PyQt5.QtWidgets.QMainWindow, form.Ui_MainWindow):
         self.setFixedSize(self.size())
         dst_path=get_reg("InstallLocation")
 
+        self.archive_po=None
+        self.bank_po=None
         self.stringspo_path=None
         self.DSTpo_path=None
+        self.old_DSTpo_path=None
         # dst_path="D:\SteamLibrary\steamapps\common\Don't Starve Together"
         if dst_path:
             self.DSTpo_path = os.path.join(os.path.dirname(__file__), r'DST.po')
+            
+            self.old_DSTpo_path = os.path.join(os.path.dirname(__file__), r'old_DST.po')
             
             check_file(self.DSTpo_path)
             check_file(dst_path+r"\data\databundles\scripts.zip")
@@ -171,13 +217,60 @@ class ExampleApp(PyQt5.QtWidgets.QMainWindow, form.Ui_MainWindow):
             # self.plainTextEdit.appendPlainText("Путь до папки с игрой: " + dst_path)
             # self.plainTextEdit.appendPlainText("Путь до strings.pot: "+self.stringspo_path)
             # self.plainTextEdit.appendPlainText("Путь до DST.po: " + self.DSTpo_path)
+            self.pushButton.clicked.connect(self.same_msgid)
             self.pushButton1.clicked.connect(self.add_new_strings)
             self.pushButton3.clicked.connect(self.save_empty_strings)
             self.pushButton2.clicked.connect(self.merge_files)
             self.pushButton4.clicked.connect(self.check_struct)
-            # self.pushButton5.clicked.connect(self.replace_git)
+            self.pushButton5.clicked.connect(self.download_dst_from_github)
+            self.pushButton6.clicked.connect(self.github_button)
+            self.pushButton7.clicked.connect(self.open_project)
         else:
             write_error_log(Exception("Не найден ключ реестра"))
+            
+    def open_project(self):
+        os.system(f"explorer {os.path.dirname(__file__)}")
+        
+    def github_button(self):
+        try:
+            config = configparser.ConfigParser()
+            config.read("scripts/config.ini", encoding="utf-8")
+            
+            path_to_gh_repo = config.get("DEFAULT", "PATH_TO_GITHUB_REPO")
+
+            if not os.path.exists(path_to_gh_repo):
+                raise Exception()
+            copyfile(self.DSTpo_path, path_to_gh_repo+'DST.po')
+            
+            if config.getboolean("DEFAULT", "OPEN_GITHUB"):
+                os.system("github " + path_to_gh_repo)
+                
+            self.add_log_line("DST.po помещён в локальный репозиторий RLP")
+            self.add_log_line("Открытие Github Desktop")
+        except:
+            # QMessageBox.warning(self, "Ошибка!", "Отсутствует файл scripts\config.ini")
+            self.add_log_line("Ошибка! Отсутствует файл scripts\config.ini")
+            
+        
+    def download_dst_from_github(self):
+        with open(self.DSTpo_path, "w",encoding="utf-8") as f:
+            f.write(requests.get("https://raw.githubusercontent.com/CunningFox146/RLP/master/DST.po").text)
+        os.startfile(__file__)
+        sys.exit()
+
+        
+    def same_msgid(self):
+        filename1 = self.openFileNameDialog(file_open_dialog_text="Выберите файл для поиска строк:", default_filename="old_DST.po")
+        if not filename1:
+            return None
+        filename2 = self.openFileNameDialog(file_open_dialog_text="Выберите файл для размещения строк:", default_filename="ClearStrocks.po")
+        if not filename2:
+            return None
+        self.same_msgid_thread = same_msgid(filename1,filename2)
+        self.same_msgid_thread.progress.connect(self.update_progress)
+        self.same_msgid_thread.msg.connect(self.add_log_line)
+        self.same_msgid_thread.finished.connect(self.count_empty)
+        self.same_msgid_thread.start()
 
     def check_struct(self):
         filename = self.openFileNameDialog()
@@ -250,6 +343,7 @@ class ExampleApp(PyQt5.QtWidgets.QMainWindow, form.Ui_MainWindow):
         self.merge_files_thread.start()
 
     def add_new_strings(self):
+        copyfile(self.DSTpo_path, self.old_DSTpo_path)
         self.new_strings_thread = add_new_strings(self.stringspo_path,self.DSTpo_path)
         self.new_strings_thread.progress.connect(self.update_progress)
         self.new_strings_thread.msg.connect(self.add_log_line)
@@ -276,7 +370,7 @@ class ExampleApp(PyQt5.QtWidgets.QMainWindow, form.Ui_MainWindow):
             if line[:len(search4)] == search4:
                 if rustext[ind + 3] == 'msgstr ""\n':
                     toadd.extend(rustext[ind:ind + 5])
-        filename=os.path.join(os.path.dirname(__file__), r'ClearStrocks.po')
+        filename=os.path.join(os.path.dirname(__file__), f"ClearStrocks_{datetime.datetime.now().strftime('%d.%m.%Y')}.po")
         if filename:
             pot = io.open(filename, encoding='utf-8', mode='w')
             pot.seek(0)
@@ -286,10 +380,10 @@ class ExampleApp(PyQt5.QtWidgets.QMainWindow, form.Ui_MainWindow):
             pot.close()
             self.add_log_line("Файл сохранён")
 
-    def openFileNameDialog(self):
+    def openFileNameDialog(self, file_open_dialog_text="Выберите файл", default_filename=""):
         options = QFileDialog.Options()
         # options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self,"Выберите файл", "","All Files (*)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self, file_open_dialog_text, default_filename,"All Files (*)", options=options)
         if fileName:
             return  fileName
         return  None

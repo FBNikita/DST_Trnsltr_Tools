@@ -9,20 +9,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>810</width>
-    <height>320</height>
+    <width>830</width>
+    <height>350</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>810</width>
-    <height>320</height>
+    <width>830</width>
+    <height>350</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>810</width>
-    <height>320</height>
+    <width>830</width>
+    <height>350</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -32,6 +32,15 @@
    <iconset>
     <normaloff>scripts/Icon's/icon.ico</normaloff>scripts/Icon's/icon.ico</iconset>
   </property>
+  <property name="iconSize">
+   <size>
+    <width>24</width>
+    <height>24</height>
+   </size>
+  </property>
+  <property name="toolButtonStyle">
+   <enum>Qt::ToolButtonIconOnly</enum>
+  </property>
   <property name="documentMode">
    <bool>false</bool>
   </property>
@@ -40,9 +49,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>280</y>
-      <width>790</width>
-      <height>31</height>
+      <y>310</y>
+      <width>810</width>
+      <height>30</height>
      </rect>
     </property>
     <property name="font">
@@ -69,11 +78,14 @@
    <widget class="QPushButton" name="pushButton1">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>50</x>
       <y>10</y>
-      <width>170</width>
+      <width>130</width>
       <height>30</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Обновляет &lt;span style=&quot; text-decoration: underline;&quot;&gt;DST.po&lt;/span&gt; из файла для переводчиков &lt;span style=&quot; text-decoration: underline;&quot;&gt;strings.pot&lt;/span&gt; и&lt;span style=&quot; font-weight:600;&quot;&gt; создаёт копию&lt;/span&gt; предыдущей версии &lt;span style=&quot; text-decoration: underline;&quot;&gt;DST.po&lt;/span&gt;.&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Файл &lt;span style=&quot; text-decoration: underline;&quot;&gt;strings.pot&lt;/span&gt; подгружается из папки с &lt;span style=&quot; font-weight:600;&quot;&gt;обновлённой&lt;/span&gt; игрой при &lt;span style=&quot; font-weight:600;&quot;&gt;запуске&lt;/span&gt; инструмента.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="text">
      <string>Обновить из strings.pot</string>
@@ -82,14 +94,17 @@
    <widget class="QPushButton" name="pushButton2">
     <property name="geometry">
      <rect>
-      <x>550</x>
+      <x>470</x>
       <y>10</y>
-      <width>170</width>
+      <width>130</width>
       <height>30</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Добавляет &lt;span style=&quot; font-weight:600;&quot;&gt;все&lt;/span&gt; строки из выбранного файла в&lt;span style=&quot; text-decoration: underline;&quot;&gt; DST.po.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
     <property name="text">
-     <string>Слить файл с  DST.po</string>
+     <string>Слить файл с DST.po</string>
     </property>
    </widget>
    <widget class="QPlainTextEdit" name="plainTextEdit">
@@ -97,8 +112,8 @@
      <rect>
       <x>10</x>
       <y>50</y>
-      <width>790</width>
-      <height>220</height>
+      <width>810</width>
+      <height>250</height>
      </rect>
     </property>
     <property name="verticalScrollBarPolicy">
@@ -125,38 +140,44 @@
      <rect>
       <x>190</x>
       <y>10</y>
-      <width>170</width>
+      <width>130</width>
       <height>30</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Сохраняет строки с &lt;span style=&quot; font-weight:600;&quot;&gt;отсутствующим переводом&lt;/span&gt; в отдельный файл.&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Имеются ввиду все строки, где &lt;span style=&quot; text-decoration: underline;&quot;&gt;msgstr&lt;/span&gt; не содержит в кавычках&lt;span style=&quot; text-decoration: underline;&quot;&gt; ничего.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
     <property name="text">
-     <string>Сохранить пустые строки</string>
+     <string>Сохранить строки</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton4">
     <property name="geometry">
      <rect>
-      <x>370</x>
+      <x>330</x>
       <y>10</y>
-      <width>170</width>
+      <width>130</width>
       <height>30</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Ищет ошибки &lt;span style=&quot; text-decoration: underline;&quot;&gt;структуры&lt;/span&gt; выбранного файла, рекомендуется проверять, как файл &lt;span style=&quot; font-weight:600;&quot;&gt;перед&lt;/span&gt; слиянием с &lt;span style=&quot; text-decoration: underline;&quot;&gt;DST.po&lt;/span&gt;, так и сам&lt;span style=&quot; text-decoration: underline;&quot;&gt; DST.po &lt;/span&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;после&lt;/span&gt; слияния.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
     <property name="text">
-     <string>Проверить структуру файла</string>
+     <string>Проверить структуру</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton5">
     <property name="geometry">
      <rect>
-      <x>730</x>
+      <x>750</x>
       <y>10</y>
       <width>30</width>
       <height>30</height>
      </rect>
     </property>
     <property name="toolTip">
-     <string>Скопировать DST.po из директории GitHub</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Скопировать &lt;span style=&quot; text-decoration: underline;&quot;&gt;DST.po&lt;/span&gt; из репозитория &lt;span style=&quot; font-weight:600;&quot;&gt;GitHub.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="text">
      <string/>
@@ -175,7 +196,7 @@
    <widget class="QPushButton" name="pushButton6">
     <property name="geometry">
      <rect>
-      <x>770</x>
+      <x>790</x>
       <y>10</y>
       <width>30</width>
       <height>30</height>
@@ -188,7 +209,7 @@
      <bool>false</bool>
     </property>
     <property name="toolTip">
-     <string>Заменить DST.po в директории GitHub</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Заменить&lt;span style=&quot; text-decoration: underline;&quot;&gt; DST.po&lt;/span&gt; в локальном репозитории &lt;span style=&quot; font-weight:600;&quot;&gt;GitHub Desktop.&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Так же открывает &lt;span style=&quot; font-weight:600;&quot;&gt;Github Desktop&lt;/span&gt; при нажатии.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="toolTipDuration">
      <number>0</number>
@@ -207,6 +228,52 @@
      </size>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>10</y>
+      <width>130</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Ищет совпадение строк по &lt;span style=&quot; text-decoration: underline;&quot;&gt;msgid&lt;/span&gt; и заменяет в конечном файле.&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;В качестве архива, рекомендуется использовать файл перевода из репозитория, а для заполнения, файл с новыми строками &lt;span style=&quot; font-weight:600;&quot;&gt;без&lt;/span&gt; перевода.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string>Заполнить по msgid</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton7">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>30</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Открыть рабочую папку.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>scripts/Icon's/folder.ico</normaloff>scripts/Icon's/folder.ico</iconset>
+    </property>
+   </widget>
+   <zorder>pushButton</zorder>
+   <zorder>progressBar</zorder>
+   <zorder>pushButton1</zorder>
+   <zorder>pushButton2</zorder>
+   <zorder>plainTextEdit</zorder>
+   <zorder>pushButton3</zorder>
+   <zorder>pushButton4</zorder>
+   <zorder>pushButton5</zorder>
+   <zorder>pushButton6</zorder>
+   <zorder>pushButton7</zorder>
   </widget>
  </widget>
  <resources/>
